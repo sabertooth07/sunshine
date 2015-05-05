@@ -52,10 +52,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_PRESSURE,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
-            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
             WeatherContract.LocationEntry.COLUMN_COORD_LAT,
-            WeatherContract.LocationEntry.COLUMN_COORD_LONG
+            WeatherContract.LocationEntry.COLUMN_COORD_LONG,
+            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
     };
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
@@ -167,6 +167,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             Log.v(LOG_TAG, "cursor not empty");
         }
 
+        int weatherConditionId = cursor.getInt(COL_WEATHER_CONDITION_ID);
+
         String dateString = Utility.formatDate(cursor.getLong(COL_WEATHER_DATE));
         String weatherDescription = cursor.getString(COL_WEATHER_DESC);
 
@@ -189,7 +191,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         descView.setText(weatherDescription);
         dateView.setText(dateString);
         friendlyDateView.setText(Utility.getFriendlyDayString(getActivity(), cursor.getLong(COL_WEATHER_DATE)));
-        weatherIconView.setImageResource(R.drawable.ic_launcher);
+        weatherIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherConditionId));
 
         // Read humidity from cursor and update view
         float humidity = cursor.getFloat(COL_WEATHER_HUMIDITY);

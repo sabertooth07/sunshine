@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ public class ForecastAdapter extends CursorAdapter {
     private static final int VIEW_TYPE_FUTURE_DAY = 1;
     private static final int VIEW_TYPE_COUNT = 2;
     int a;
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -116,12 +118,19 @@ public class ForecastAdapter extends CursorAdapter {
 
 
         // Read weather icon ID from cursor
-        long weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_ID);
+        int weatherConditionId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        Log.v(LOG_TAG, Integer.toString(weatherConditionId));
 
         // Use placeholder image for now
+        int viewType = getItemViewType(cursor.getPosition());
         ImageView iconView = viewHolder.iconView;
         //ImageView iconView = (ImageView) view.findViewById(R.id.list_item_icon);
-        iconView.setImageResource(R.drawable.ic_launcher);
+        if (viewType == VIEW_TYPE_TODAY) {
+            iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherConditionId));
+        } else if (viewType == VIEW_TYPE_FUTURE_DAY) {
+            iconView.setImageResource(Utility.getIconResourceForWeatherCondition(weatherConditionId));
+        }
+
 
         long date = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
         viewHolder.dateView.setText(Utility.getFriendlyDayString(context, date));
